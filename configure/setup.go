@@ -11,25 +11,6 @@ import (
 	"strings"
 )
 
-
-type TokenDetails struct {
-	Client_id string `json:"client_id"`
-	Project_id string `json:"project_id"`
-	Auth_uri string `json:"auth_uri"`
-	Token_uri string `json:token_uri`
-	Auth_cert string `json:"auth_provider_x509_cert_url"`
-	Client_secret string `json:"client_secret"`
-	Redirect_uris []string `json:"redirect_uris"`
-}
-
-
-type GoogleToken struct {
-	Web TokenDetails
-}
-
-
-
-
 type TODOStruct struct {
 	Id     string `json:"client_id"`
 	Secret string `json:"client_secret"`
@@ -245,5 +226,3 @@ func GetID(access_token string) (string, error) {
 	return result.String(), err
 
 }
-
-

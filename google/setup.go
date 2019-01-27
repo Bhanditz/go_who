@@ -3,12 +3,37 @@ package google
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/levigross/grequests"
+
 	//"github.com/levigross/grequests"
 	. "github.com/mchirico/go_who/util"
 	"log"
 	"os/user"
 	"sync"
 )
+
+type TokenDetails struct {
+	Client_id     string   `json:"client_id"`
+	Project_id    string   `json:"project_id"`
+	Auth_uri      string   `json:"auth_uri"`
+	Token_uri     string   `json:token_uri`
+	Auth_cert     string   `json:"auth_provider_x509_cert_url"`
+	Client_secret string   `json:"client_secret"`
+	Redirect_uris []string `json:"redirect_uris"`
+}
+
+type GoogleToken struct {
+	Web TokenDetails
+}
+
+type GoogleResponse struct {
+	Access_token  string `json:"access_token"`
+	Expires_in    int    `json:"expires_in"`
+	Refresh_token string `json:"refresh_token"`
+	Scope         string `json:"scope"`
+	Token_type    string `json:"token_type"`
+	Id_token      string `json:"id_token"`
+}
 
 type GoogleWebStruct struct {
 	ClientID                string   `json:"client_id"`
@@ -22,7 +47,8 @@ type GoogleWebStruct struct {
 }
 
 type GoogleSecret struct {
-	Web GoogleWebStruct `json:"web"`
+	Web  GoogleWebStruct `json:"web"`
+	Code string
 	sync.Mutex
 }
 
@@ -69,16 +95,38 @@ type Gas struct {
 	GrantType    string `json:"grant_type""`
 }
 
-func (g *GoogleSecret) GetToken(vals map[string]string) {
+func (g *GoogleSecret) GetToken(code string) {
 	g.Lock()
 	defer g.Unlock()
 
-	code, ok := vals["code"]
-	if !ok {
-
-		log.Printf("We didn't get a code")
-		return
-	}
-
+	g.Code = code
 	log.Printf("code: %v\n", code)
+}
+
+func (g *GoogleSecret) MakeRequest(
+	url string, code string) (*grequests.Response, error) {
+
+	g.Lock()
+	defer g.Unlock()
+
+	g.Code = code
+
+	ro := grequests.RequestOptions{}
+
+	log.Printf("**  Using this code: %v\n", g.Code)
+
+	headers := map[string]string{}
+	headers["Content-Type"] = "application/x-www-form-urlencoded"
+
+	ro.Headers = headers
+	m := map[string]string{}
+	m["client_id"] = g.Web.ClientID
+	m["client_secret"] = g.Web.ClientSecret
+	m["code"] = code
+	m["grant_type"] = "authorization_code"
+	m["redirect_uri"] = g.Web.RedirectUris[0]
+	ro.Data = m
+	r, err := grequests.Post(url, &ro)
+	return r, err
+
 }

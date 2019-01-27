@@ -3,6 +3,7 @@ package configure
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/mchirico/go_who/google"
 	. "github.com/mchirico/go_who/util"
 	"os/user"
 	"testing"
@@ -24,7 +25,7 @@ func TestReadGoogleClientID(t *testing.T) {
 	if err != nil {
 		t.Fail()
 	}
-	googleToken := GoogleToken{}
+	googleToken := google.GoogleToken{}
 	err = json.Unmarshal([]byte(data), &googleToken)
 	if err != nil {
 		panic(err)
@@ -35,9 +36,3 @@ func TestReadGoogleClientID(t *testing.T) {
 	}
 	fmt.Printf("\n...%v", googleToken.Web.Auth_cert)
 }
-
-
-
-
-
-
