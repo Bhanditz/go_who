@@ -3,10 +3,13 @@ package main
 import (
 	"github.com/mchirico/go_who/configure"
 	"github.com/mchirico/go_who/pkg"
+	"log"
 	"os/user"
 )
 
 func main() {
+
+	log.Printf("version 2")
 
 	a := pkg.App{}
 	a.Initilize()
