@@ -43,6 +43,8 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/auth/google/callback", a.getAuthGoogle).Methods("GET")
 	a.Router.HandleFunc("/auth/google/callback", a.getAuthGoogle).Methods("POST")
 
+	a.Router.HandleFunc("/auth/google/reset", a.resetGoogle).Methods("GET")
+
 	a.Router.HandleFunc("/auth2", a.getAuth2).Methods("GET")
 	a.Router.HandleFunc("/auth2", a.getAuth2).Methods("POST")
 
@@ -112,6 +114,28 @@ func (a *App) getProducts(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, products)
 }
 
+func (a *App) resetGoogle(w http.ResponseWriter, r *http.Request) {
+
+	session, err := store.Get(r, "session-user")
+	if err != nil {
+		log.Printf("Session Get... should exist: %v\n", err)
+	}
+
+	session.Values["email"] = "reset"
+	session.Values[42] = 43
+	session.Options.MaxAge = -1
+	session.Save(r, w)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	_, err = w.Write([]byte(`{reset:"Should have reset"}`))
+	if err != nil {
+		log.Printf("Can not write response: %v\n", err)
+	}
+
+
+}
+
 func (a *App) status(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("We are in status\n")
@@ -148,11 +172,8 @@ func (a *App) getAuthGoogle(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("This is good... not previous cookie: %v\n", err)
 
-	} else {
-		// Don't come back to this point..
-		return
 	}
-
+	
 	vals := r.URL.Query()
 	log.Printf("vals: %v\n", vals)
 
