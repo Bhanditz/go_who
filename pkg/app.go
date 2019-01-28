@@ -199,7 +199,7 @@ func (a *App) getAuthGoogle(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) getAuth(w http.ResponseWriter, r *http.Request) {
 
-	log.Printf("We are in getAuth\n")
+	log.Printf("We are in getAuth ...\n")
 	log.Printf("Method: %v\n", r.Method)
 	log.Printf("Header: %v\n", r.Header)
 

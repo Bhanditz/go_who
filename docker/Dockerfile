@@ -16,14 +16,13 @@ RUN go build -o /auth github.com/mchirico/go_who/cmd/auth
 RUN cd /go/src/github.com/prometheus/node_exporter && go build
 
 
-
 FROM golang:1.11.4-alpine
 
 COPY --from=builder /go/src/github.com/prometheus/node_exporter/node_exporter /go/bin/node_exporter
 COPY --from=builder /auth /go/bin/auth
 
 COPY exec.go /go/src/exec.go
-COPY .go_who_secret_google /root/.go_who_secret_google
+COPY .go_who_secret /root/.go_who_secret
 
 CMD ["/usr/local/go/bin/go","run","/go/src/exec.go"]
 
