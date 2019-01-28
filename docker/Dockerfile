@@ -29,7 +29,7 @@ CMD ["/usr/local/go/bin/go","run","/go/src/exec.go"]
 
 
 # To build this:
-# docker build -t us.gcr.io/mchirico/auth:pig .
+# docker build --no-cache -t us.gcr.io/mchirico/auth:pig .
 
 
 # To run this:
@@ -38,3 +38,6 @@ CMD ["/usr/local/go/bin/go","run","/go/src/exec.go"]
 
 # To push
 # docker push us.gcr.io/mchirico/auth:pig
+
+# You can run in detached mode
+# docker  run -d -p 4591:4591 -p 9190:9100 --rm -it us.gcr.io/mchirico/auth:pig
