@@ -1,11 +1,14 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/sessions"
 	"github.com/levigross/grequests"
 	"github.com/mchirico/go_who/configure"
 	"github.com/mchirico/go_who/pkg"
+	"github.com/mchirico/go_who/rand"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -26,26 +29,6 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-//TODO: Fix this test, it could be useful
-func testAuth(t *testing.T) {
-
-	oSecretStruct := configure.SecretStruct{}
-
-	oSecretStruct.Id = "01223"
-	oSecretStruct.Secret = "password"
-	oSecretStruct.Url = "https://httpbin.org/post"
-
-	a.InitSS(&oSecretStruct)
-
-	req, _ := http.NewRequest("POST", oSecretStruct.Url, nil)
-	response := executeRequest(req)
-
-	//checkResponseCode(t, http.StatusOK, response.Code)
-
-	if body := response.Body.String(); body != "code" {
-		t.Errorf("Expected an empty array. Got %s", body)
-	}
-}
 
 // Ref: https://play.golang.org/p/UGeNKd-cw34
 func TestResponseCode(t *testing.T) {
@@ -218,6 +201,102 @@ func TestRoot(t *testing.T) {
 		t.Errorf("Expected an array. Got %s", body)
 	}
 }
+
+
+func NewRecorder() *httptest.ResponseRecorder {
+	return &httptest.ResponseRecorder{
+		HeaderMap: make(http.Header),
+		Body:      new(bytes.Buffer),
+	}
+}
+
+// Not working...
+func testMetricWithUser(t *testing.T) {
+	originalPath := "info:/"
+	store := sessions.NewCookieStore(rand.RandKey)
+	store.Options.Path = originalPath
+
+	req, err := http.NewRequest("GET", "/metrics", nil)
+	if err != nil {
+		t.Fatal("failed to create request", err)
+	}
+	w := NewRecorder()
+	session, err := store.Get(req, "session-user")
+	if err != nil {
+		t.Fatal("failed to create session", err)
+	}
+	session.Values["email"] = "mchirico@gmail.com"
+	session.Values[42] = 43
+	err = session.Save(req, w)
+	if err != nil {
+		t.Fatal("failed to save session", err)
+	}
+	response := executeRequest(req)
+	checkResponseCode(t, http.StatusOK, response.Code)
+
+	if body := response.Body.String(); body !=
+		`{email:"mchirico@gmail.com"}` {
+		t.Errorf("Expected an array. Got %s", body)
+	}
+}
+
+
+
+func TestStatus(t *testing.T) {
+	originalPath := "info:/"
+	store := sessions.NewCookieStore(rand.RandKey)
+	store.Options.Path = originalPath
+
+	req, err := http.NewRequest("GET", "/status", nil)
+	if err != nil {
+		t.Fatal("failed to create request", err)
+	}
+	w := NewRecorder()
+	session, err := store.Get(req, "session-user")
+	if err != nil {
+		t.Fatal("failed to create session", err)
+	}
+	session.Values["email"] = "mchirico@gmail.com"
+	session.Values[42] = 43
+	err = session.Save(req, w)
+	if err != nil {
+		t.Fatal("failed to save session", err)
+	}
+	response := executeRequest(req)
+	checkResponseCode(t, http.StatusOK, response.Code)
+
+	if body := response.Body.String(); body !=
+		`{email:"mchirico@gmail.com"}` {
+		t.Errorf("Expected an email. Got %s", body)
+	}
+}
+
+
+
+func TestSession(t *testing.T){
+	originalPath := "/"
+	store := sessions.NewFilesystemStore("")
+	store.Options.Path = originalPath
+	req, err := http.NewRequest("GET", "http://www.example.com", nil)
+	if err != nil {
+		t.Fatal("failed to create request", err)
+	}
+
+	session, err := store.New(req, "hello")
+	if err != nil {
+		t.Fatal("failed to create session", err)
+	}
+
+	store.Options.Path = "/foo"
+	if session.Options.Path != originalPath {
+		t.Fatalf("bad session path: got %q, want %q", session.Options.Path, originalPath)
+	}
+
+
+}
+
+
+
 
 func executeRequest(req *http.Request) *httptest.ResponseRecorder {
 	rr := httptest.NewRecorder()

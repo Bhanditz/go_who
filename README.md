@@ -17,7 +17,6 @@ go get -u github.com/mongodb/mongo-go-driver/mongo
 go get -u github.com/markbates/goth
 go get -u  github.com/dgrijalva/jwt-go
 
-
 # Run Different Examples
 go get -u github.com/mchirico/go_auth/cmd/auth
 

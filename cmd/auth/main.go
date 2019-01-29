@@ -9,7 +9,7 @@ import (
 
 func main() {
 
-	log.Printf("version 2")
+	log.Printf("version 3.1")
 
 	a := pkg.App{}
 	a.Initilize()

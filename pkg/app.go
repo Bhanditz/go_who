@@ -18,7 +18,7 @@ import (
 	"time"
 )
 
-var store = sessions.NewCookieStore([]byte(rand.RandomString(73)))
+var store = sessions.NewCookieStore(rand.RandKey)
 
 type App struct {
 	Router *mux.Router
@@ -51,7 +51,8 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/upload", a.receiveFile).Methods("POST")
 
 	a.Router.HandleFunc("/status", a.status).Methods("GET")
-	// a.Router.HandleFunc("/product", a.createProduct).Methods("POST")
+
+
 
 }
 
@@ -133,7 +134,6 @@ func (a *App) resetGoogle(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Can not write response: %v\n", err)
 	}
 
-
 }
 
 func (a *App) status(w http.ResponseWriter, r *http.Request) {
@@ -161,6 +161,28 @@ func (a *App) status(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// This will not work:
+//   Read: https://prometheus.io/docs/guides/go-application/
+func (a *App) metrics(w http.ResponseWriter, r *http.Request) {
+
+	log.Printf("We are in metrics\n")
+	log.Printf("Method: %v\n", r.Method)
+	log.Printf("Header: %v\n", r.Header)
+
+	session, err := store.Get(r, "session-user")
+
+	if err != nil {
+		log.Printf("Session error: %v\n", err)
+	}
+
+	if session.Values["email"] == "mchirico@gmail.com" {
+		// promhttp.Handler()
+	} else {
+		// promhttp.Handler()
+	}
+
+}
+
 // Using this one
 func (a *App) getAuthGoogle(w http.ResponseWriter, r *http.Request) {
 
@@ -173,7 +195,7 @@ func (a *App) getAuthGoogle(w http.ResponseWriter, r *http.Request) {
 		log.Printf("This is good... not previous cookie: %v\n", err)
 
 	}
-	
+
 	vals := r.URL.Query()
 	log.Printf("vals: %v\n", vals)
 

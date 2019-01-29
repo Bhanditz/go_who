@@ -22,3 +22,5 @@ func StringWithCharset(length int, charset string) string {
 func RandomString(length int) string {
 	return StringWithCharset(length, charset)
 }
+
+var RandKey = []byte(RandomString(73))
