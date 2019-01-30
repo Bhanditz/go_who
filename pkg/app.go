@@ -52,8 +52,6 @@ func (a *App) initializeRoutes() {
 
 	a.Router.HandleFunc("/status", a.status).Methods("GET")
 
-
-
 }
 
 func (a *App) Run(addr string, writeTimeout int, readTimeout int) {
@@ -128,7 +126,7 @@ func (a *App) resetGoogle(w http.ResponseWriter, r *http.Request) {
 	session.Save(r, w)
 
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
+	//w.WriteHeader(200)
 	_, err = w.Write([]byte(`{reset:"Should have reset"}`))
 	if err != nil {
 		log.Printf("Can not write response: %v\n", err)

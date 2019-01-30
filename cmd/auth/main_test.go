@@ -29,7 +29,6 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-
 // Ref: https://play.golang.org/p/UGeNKd-cw34
 func TestResponseCode(t *testing.T) {
 	type SendData struct {
@@ -202,7 +201,6 @@ func TestRoot(t *testing.T) {
 	}
 }
 
-
 func NewRecorder() *httptest.ResponseRecorder {
 	return &httptest.ResponseRecorder{
 		HeaderMap: make(http.Header),
@@ -240,8 +238,6 @@ func testMetricWithUser(t *testing.T) {
 	}
 }
 
-
-
 func TestStatus(t *testing.T) {
 	originalPath := "info:/"
 	store := sessions.NewCookieStore(rand.RandKey)
@@ -269,11 +265,10 @@ func TestStatus(t *testing.T) {
 		`{email:"mchirico@gmail.com"}` {
 		t.Errorf("Expected an email. Got %s", body)
 	}
+
 }
 
-
-
-func TestSession(t *testing.T){
+func TestSession(t *testing.T) {
 	originalPath := "/"
 	store := sessions.NewFilesystemStore("")
 	store.Options.Path = originalPath
@@ -292,11 +287,7 @@ func TestSession(t *testing.T){
 		t.Fatalf("bad session path: got %q, want %q", session.Options.Path, originalPath)
 	}
 
-
 }
-
-
-
 
 func executeRequest(req *http.Request) *httptest.ResponseRecorder {
 	rr := httptest.NewRecorder()
