@@ -268,6 +268,36 @@ func TestStatus(t *testing.T) {
 
 }
 
+func TestStatusNoEmail(t *testing.T) {
+	originalPath := "info:/"
+	store := sessions.NewCookieStore(rand.RandKey)
+	store.Options.Path = originalPath
+
+	req, err := http.NewRequest("GET", "/status", nil)
+	if err != nil {
+		t.Fatal("failed to create request", err)
+	}
+	w := NewRecorder()
+	session, err := store.Get(req, "session-user")
+	if err != nil {
+		t.Fatal("failed to create session", err)
+	}
+
+	session.Values[42] = 43
+	err = session.Save(req, w)
+	if err != nil {
+		t.Fatal("failed to save session", err)
+	}
+	response := executeRequest(req)
+	checkResponseCode(t, http.StatusOK, response.Code)
+
+	if body := response.Body.String(); body !=
+		`{email:"%!s(<nil>)"}` {
+		t.Errorf("Expected an email. Got %s", body)
+	}
+
+}
+
 func TestSession(t *testing.T) {
 	originalPath := "/"
 	store := sessions.NewFilesystemStore("")
