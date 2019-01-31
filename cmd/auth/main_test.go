@@ -268,6 +268,26 @@ func TestStatus(t *testing.T) {
 
 }
 
+func TestInfo(t *testing.T) {
+	req, err := http.NewRequest("GET", "/info", nil)
+	if err != nil {
+		t.Fatal("failed to create request", err)
+	}
+
+	response := executeRequest(req)
+	checkResponseCode(t, http.StatusOK, response.Code)
+
+	expectedResponse := `
+<a href="https://bit.ly/2sMoemb"> pig.za261.io </a>
+<a href="https://bit.ly/2B5hHrw"> who.aipiggybot.io </a>
+`
+
+	if body := response.Body.String(); body !=
+		expectedResponse {
+		t.Errorf("Not expected value. Got %s", expectedResponse)
+	}
+}
+
 func TestStatusNoEmail(t *testing.T) {
 	originalPath := "info:/"
 	store := sessions.NewCookieStore(rand.RandKey)

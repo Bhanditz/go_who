@@ -52,6 +52,8 @@ func (a *App) initializeRoutes() {
 
 	a.Router.HandleFunc("/status", a.status).Methods("GET")
 
+	a.Router.HandleFunc("/info", a.info).Methods("GET")
+
 }
 
 func (a *App) Run(addr string, writeTimeout int, readTimeout int) {
@@ -178,6 +180,17 @@ func (a *App) metrics(w http.ResponseWriter, r *http.Request) {
 	} else {
 		// promhttp.Handler()
 	}
+
+}
+
+func (a *App) info(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/html")
+	w.WriteHeader(200)
+	msg := `
+<a href="https://bit.ly/2sMoemb"> pig.za261.io </a>
+<a href="https://bit.ly/2B5hHrw"> who.aipiggybot.io </a>
+`
+	fmt.Fprintf(w, "%s", msg)
 
 }
 
