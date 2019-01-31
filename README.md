@@ -1,11 +1,11 @@
 # go_who
 Golang Application for OAuth2
 
-## JIRA
+## JIRA and Confluence
 
 [jira.aipiggybot.io/projects/WHO/summary](https://jira.aipiggybot.io/projects/WHO/summary)
 
-## Confluence
+
 [Confluence Developer Documentation](https://confluence.aipiggybot.io/display/GOW/go_who)
 
 ```bash
