@@ -32,7 +32,7 @@ func (a *App) Initilize() {
 	a.initializeRoutes()
 }
 
-// TODO: Take our harvest and pump in flag for google value
+// TODO: Take out harvest and pump in flag for google value
 func (a *App) InitSS(secStr *configure.SecretStruct) {
 	a.secStr = secStr
 }
