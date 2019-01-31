@@ -2,7 +2,7 @@ package main
 
 import (
 	"bytes"
-	"github.com/mchirico/go_who/pkg/rpkg"
+	"github.com/mchirico/go_who/rpkg"
 	"net/http"
 	"net/http/httptest"
 	"os"

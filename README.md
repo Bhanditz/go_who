@@ -5,7 +5,6 @@ Golang Application for OAuth2
 
 [jira.aipiggybot.io/projects/WHO/summary](https://jira.aipiggybot.io/projects/WHO/summary)
 
-
 [Confluence Developer Documentation](https://confluence.aipiggybot.io/display/GOW/go_who)
 
 ```bash

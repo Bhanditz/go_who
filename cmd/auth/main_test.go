@@ -276,15 +276,11 @@ func TestInfo(t *testing.T) {
 
 	response := executeRequest(req)
 	checkResponseCode(t, http.StatusOK, response.Code)
-
-	expectedResponse := `
-<a href="https://bit.ly/2sMoemb"> pig.za261.io </a>
-<a href="https://bit.ly/2B5hHrw"> who.aipiggybot.io </a>
-`
+	expectedResponse := `{pig.za261.io:"https://bit.ly/2sMoemb",who.aipiggybot.io:"https://bit.ly/2B5hHrw"}`
 
 	if body := response.Body.String(); body !=
 		expectedResponse {
-		t.Errorf("Not expected value. Got %s", expectedResponse)
+		t.Errorf("Expected:\n%s\n Got:\n%s\n", expectedResponse, body)
 	}
 }
 

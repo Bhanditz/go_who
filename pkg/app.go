@@ -41,17 +41,9 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/", a.getRoot).Methods("GET")
 	a.Router.HandleFunc("/products", a.getProducts).Methods("GET")
 	a.Router.HandleFunc("/auth/google/callback", a.getAuthGoogle).Methods("GET")
-	a.Router.HandleFunc("/auth/google/callback", a.getAuthGoogle).Methods("POST")
-
 	a.Router.HandleFunc("/auth/google/reset", a.resetGoogle).Methods("GET")
-
-	a.Router.HandleFunc("/auth2", a.getAuth2).Methods("GET")
-	a.Router.HandleFunc("/auth2", a.getAuth2).Methods("POST")
-
 	a.Router.HandleFunc("/upload", a.receiveFile).Methods("POST")
-
 	a.Router.HandleFunc("/status", a.status).Methods("GET")
-
 	a.Router.HandleFunc("/info", a.info).Methods("GET")
 
 }
@@ -184,13 +176,16 @@ func (a *App) metrics(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) info(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/html")
+
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
-	msg := `
-<a href="https://bit.ly/2sMoemb"> pig.za261.io </a>
-<a href="https://bit.ly/2B5hHrw"> who.aipiggybot.io </a>
-`
-	fmt.Fprintf(w, "%s", msg)
+	s := fmt.Sprintf("{pig.za261.io:\"%s\",who.aipiggybot.io:\"%s\"}",
+		"https://bit.ly/2sMoemb",
+		"https://bit.ly/2B5hHrw")
+	_, err := w.Write([]byte(s))
+	if err != nil {
+		log.Printf("Can not write response: %v\n", err)
+	}
 
 }
 
@@ -240,9 +235,11 @@ func (a *App) getAuthGoogle(w http.ResponseWriter, r *http.Request) {
 
 		session.Save(r, w)
 
-		w.Header().Set("Content-Type", "application/json")
+		msg := fmt.Sprintf("{a:\"%s\"}", session.Values["email"])
+
+		w.Header().Set("Content-Type", "text/html")
 		w.WriteHeader(200)
-		_, err = w.Write([]byte(`{a:"one"}`))
+		_, err = w.Write([]byte(msg))
 		if err != nil {
 			log.Printf("Can not write response: %v\n", err)
 		}
@@ -297,17 +294,6 @@ func (a *App) getAuth(w http.ResponseWriter, r *http.Request) {
 	} else {
 		fmt.Printf("\n\n Something Wrong:%v\n\n", vals)
 	}
-}
-
-func (a *App) getAuth2(w http.ResponseWriter, r *http.Request) {
-
-	log.Printf("We are in getAuth2\n")
-	log.Printf("Method: %v\n", r.Method)
-	log.Printf("Header: %v\n", r.Header)
-	vals := r.URL.Query()
-	log.Printf("vals:\n%v", vals)
-	getToDoistToken(vals)
-
 }
 
 func getToDoistToken(vals map[string][]string) {
