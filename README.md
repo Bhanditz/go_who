@@ -5,6 +5,9 @@ Golang Application for OAuth2
 
 [jira.aipiggybot.io/projects/WHO/summary](https://jira.aipiggybot.io/projects/WHO/summary)
 
+## Confluence
+[Confluence Developer Documentation](https://confluence.aipiggybot.io/display/GOW/go_who)
+
 ```bash
 go get -u github.com/gorilla/mux
 go get -u github.com/gorilla/rpc
